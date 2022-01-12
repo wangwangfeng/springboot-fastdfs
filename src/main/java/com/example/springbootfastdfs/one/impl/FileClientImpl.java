@@ -2,11 +2,12 @@ package com.example.springbootfastdfs.one.impl;
 
 import com.example.springbootfastdfs.one.FastdfsConnetionPool;
 import com.example.springbootfastdfs.one.FileClient;
+import com.example.springbootfastdfs.utils.FileUtil;
 import org.csource.common.NameValuePair;
 import org.csource.fastdfs.StorageClient1;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
 
 /**
  * @Classname: FileClientImpl
@@ -19,14 +20,14 @@ public class FileClientImpl implements FileClient {
 
     @Override
     public String uploadFile(File file) {
-        byte[] buff = getFileBuff(file);
-        String file_ext_name = getFileExtName(file.getName());
+        byte[] buff = FileUtil.getFileBuff(file);
+        String file_ext_name = FileUtil.getFileExtName(file.getName());
         return upload(buff, file_ext_name, null);
     }
 
     @Override
     public String uploadFile(File file, String file_ext_name) {
-        byte[] buff = getFileBuff(file);
+        byte[] buff = FileUtil.getFileBuff(file);
         return upload(buff, file_ext_name, null);
     }
 
@@ -42,47 +43,12 @@ public class FileClientImpl implements FileClient {
 
     @Override
     public void downloadFile(String groupName, String fileUrl, String filePath) {
-        writeByteToFile(download(groupName, fileUrl), filePath);
+        FileUtil.writeByteToFile(download(groupName, fileUrl), filePath);
     }
 
     @Override
     public void deleteFile(String groupName, String fileUrl) {
         delete(groupName, fileUrl);
-    }
-
-    // 文件转字节数组
-    private byte[] getFileBuff(File file) {
-        byte[] buff = null;
-        try {
-            FileInputStream inputStream = new FileInputStream(file);
-            buff = new byte[inputStream.available()];
-            inputStream.read(buff);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return buff;
-    }
-
-    // 字节数组转文件
-    private void writeByteToFile(byte[] fileByte, String fileName) {
-        File file = new File(fileName);
-        try (FileOutputStream fos = new FileOutputStream(file);
-             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
-            bos.write(fileByte);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // 通过文件名称获取文件拓展名
-    private String getFileExtName(String name) {
-        String ext_name = null;
-        if (name != null) {
-            if (name.contains(".")) {
-                ext_name = name.substring(name.indexOf(".") + 1);
-            }
-        }
-        return ext_name;
     }
 
     // 文件上传

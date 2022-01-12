@@ -30,7 +30,7 @@ public class FastDfsClient {
         try {
             uploadResults = storageClient.upload_file(fileByte, fileExtName, valuePairs);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("上传文件异常:{}", e);
         } finally {
             FastdfsConnetionPool.recycleStorageClient(storageClient);
         }
@@ -45,14 +45,14 @@ public class FastDfsClient {
      * @return
      */
     public static byte[] download(String groupName, String fileUrl) {
-        byte[] group1s = null;
+        byte[] fbyte = null;
         try {
             StorageClient storageClient = FastdfsConnetionPool.findStorageClient();
-            group1s = storageClient.download_file(groupName, fileUrl);
+            fbyte = storageClient.download_file(groupName, fileUrl);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("下载文件异常:{}", e);
         }
-        return group1s;
+        return fbyte;
     }
 
     /**
@@ -69,7 +69,7 @@ public class FastDfsClient {
                 log.info("删除文件成功：");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("删除文件异常:{}", e);
         }
     }
 
@@ -92,7 +92,7 @@ public class FastDfsClient {
                 return map;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("获取文件元数据异常:{}", e);
         }
         return null;
     }

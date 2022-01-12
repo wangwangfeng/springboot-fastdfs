@@ -21,7 +21,7 @@ import java.util.UUID;
  * http://172.168.253.183/group1/M00/00/00/rKj9t2HdP-uADJcFAA58T1dKwJs825.png
  */
 @Controller
-@RequestMapping(value = "/")
+@RequestMapping(value = "/one")
 @Slf4j
 public class TestOneController {
 
@@ -29,7 +29,8 @@ public class TestOneController {
     public FileClient fileClient;
 
     /**
-     * @Description: 上传图片：http://localhost:8080/upload
+     * @Description: 上传图片：http://localhost:8080/one/upload
+     * 返回值：group1/M00/00/00/rKj9t2HeRWqAGA1YAA58T1dKwJs527.png
      **/
     @GetMapping(value = "/upload")
     @ResponseBody
@@ -41,7 +42,7 @@ public class TestOneController {
     }
 
     /**
-     * @Description: 下载图片：http://localhost:8080/download
+     * @Description: 下载图片：http://localhost:8080/one/download
      * @param: groupName   group1
      * @param fileUrl      M00/00/00/rKj9t2HdP-uADJcFAA58T1dKwJs825.png   注意前面没有 /
      **/
@@ -61,7 +62,7 @@ public class TestOneController {
     }
 
     /**
-     * @Description: 删除图片：http://localhost:8080/delete
+     * @Description: 删除图片：http://localhost:8080/one/delete
      * @param: groupName   group1
      * @param fileUrl      M00/00/00/rKj9t2HdP-uADJcFAA58T1dKwJs825.png   注意前面没有 /
      **/

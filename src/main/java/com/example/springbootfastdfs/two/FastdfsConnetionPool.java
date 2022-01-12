@@ -2,9 +2,8 @@ package com.example.springbootfastdfs.two;
 
 import lombok.extern.slf4j.Slf4j;
 import org.csource.fastdfs.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @author: wwf
  */
 @Slf4j
+@Configuration
 public class FastdfsConnetionPool {
 
     // 默认连接池大小
@@ -30,18 +30,18 @@ public class FastdfsConnetionPool {
 
     private static TrackerClient trackerClient;
 
-    @Value("classpath:fastdfs_client.conf")
-    private static Resource re;
+    private static final String CONF_NAME = "fastdfs_client.conf";
 
     /**
      * 初始化
      **/
     static {
         try {
-            ClientGlobal.init(re.getFilename());
+            String filePath = new ClassPathResource(CONF_NAME).getFile().getAbsolutePath();
+            ClientGlobal.init(filePath);
             trackerClient = new TrackerClient(ClientGlobal.g_tracker_group);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("初始化连接池异常:{}", e);
         }
     }
 
@@ -57,7 +57,7 @@ public class FastdfsConnetionPool {
                         current_index++;
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("创建连接异常createStorageClient():{}", e);
                 }
 
             }
@@ -75,7 +75,7 @@ public class FastdfsConnetionPool {
             try {
                 clientInfo = storageClientQueue.poll(10, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("获取连接异常findStorageClient():{}", e);
             }
         }
         return clientInfo;
@@ -88,7 +88,7 @@ public class FastdfsConnetionPool {
                 storageClientQueue.offer(storageClient);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("回收连接异常recycleStorageClient():{}", e);
         }
     }
 
