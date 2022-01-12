@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.csource.common.NameValuePair;
 import org.csource.fastdfs.StorageClient;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,6 +56,29 @@ public class FastDfsClient {
             log.error("下载文件异常:{}", e);
         }
         return fbyte;
+    }
+
+    /**
+     * @param: groupName
+     * @param fileUrl
+     * @param fileName 下载的文件名
+     * @param response
+     * @return: void
+     **/
+    public static void download(String groupName, String fileUrl, String fileName, HttpServletResponse response) {
+        StorageClient storageClient = FastdfsConnetionPool.findStorageClient();
+        try {
+            byte[] fbyte = storageClient.download_file(groupName, fileUrl);
+            response.reset();
+            response.setContentType("applicatoin/octet-stream");
+            response.setHeader("Content-Disposition", "attachment;filename="
+                    + URLEncoder.encode(fileName, "UTF-8"));
+            ServletOutputStream out = response.getOutputStream();
+            out.write(fbyte);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

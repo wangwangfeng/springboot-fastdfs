@@ -1,5 +1,6 @@
 package com.example.springbootfastdfs.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.example.springbootfastdfs.two.FastDfsClient;
 import com.example.springbootfastdfs.utils.FileUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.Arrays;
 import java.util.UUID;
@@ -42,7 +44,7 @@ public class TestTwoController {
     public String download(String groupName, String fileUrl) {
         log.info("下载文件");
         String ext_name = "png";
-        if (fileUrl != null) {
+        if (StrUtil.isNotEmpty(fileUrl)) {
             if (fileUrl.contains(".")) {
                 ext_name = fileUrl.substring(fileUrl.indexOf(".") + 1);
             }
@@ -51,6 +53,20 @@ public class TestTwoController {
         byte[] fbyte = FastDfsClient.download(groupName, fileUrl);
         FileUtil.writeByteToFile(fbyte, fileName);
         return fileName;
+    }
+
+    @PostMapping(value = "/download1")
+    @ResponseBody
+    public void download1(String groupName, String fileUrl, HttpServletResponse response) {
+        log.info("下载文件1");
+        String ext_name = "png";
+        if (StrUtil.isNotEmpty(fileUrl)) {
+            if (fileUrl.contains(".")) {
+                ext_name = fileUrl.substring(fileUrl.indexOf(".") + 1);
+            }
+        }
+        String fileName = UUID.randomUUID().toString() + "." + ext_name;
+        FastDfsClient.download(groupName, fileUrl, fileName, response);
     }
 
     @PostMapping(value = "/delete")
